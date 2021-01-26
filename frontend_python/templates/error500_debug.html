@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>500 Server error</title>
+</head>
+<body>
+    <h1>Exception ({{ error_type }}) occured: {{ error }}</h1>
+    Requested path: {{ path }}, query parameters : {{ params }} <br/>
+    Stack trace: <br>
+    {% for t in trace %}
+        {{ t }}<br/>
+    {% endfor %}
+</body>
+</html>

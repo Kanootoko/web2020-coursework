@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration form</title>
+</head>
+<body>
+    {% if error_message %}
+        <p style="color: red">{{ error_message }}</p>
+    {% endif %}
+    <a href='/login'>Login</a>
+    <form action="/registration" method="post">
+        <p>
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" required>
+        </p>
+        <p>
+            <label for="password1">Password</label>
+            <input type="password" name="password1" id="password1" required>
+        </p>
+        <p>
+            <label for="password2">Repeat password</label>
+            <input type="password" name="password2" id="password2" required>
+        </p>
+        <p>
+            <button type="submit">Register</button>
+        </p>
+    </form>
+</body>
+</html>

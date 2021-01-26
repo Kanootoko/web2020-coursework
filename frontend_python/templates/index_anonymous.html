@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Finances</title>
+</head>
+
+<body>
+    {% if error_message %}
+        <p style="color: red">{{ error_message }}</p>
+    {% endif %}
+    <p>
+        This is finances app. You can share your budget with a group of people and track your income/spendings.<br/>
+        To see your groups or create one, go to the <a href="/login">login page</a>. Don't have an account yet?
+        <a href="/registration">Registration</a> is waiting for you.
+    </p>
+
+</body>
+
+</html>

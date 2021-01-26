@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Group join form</title>
+</head>
+<body>
+    <h1>"{{ name }}" management</h1>
+    <a href="/">Main page</a>
+    <a href="/group/{{ id }}">Back to group</a><br/>
+    {% for user in users %}
+        {{ user.username }} - {{ user.status }}
+        {% if user.status == 'pending' %}
+            <form action="/group/{{ id }}/status/{{ user.id }}/?status=user" method="POST">
+                <button type="submit">accept</button>
+            </form>
+            <form action="/group/{{ id }}/status/{{ user.id }}/?status=blocked" method="POST">
+                <button type="submit">block</button>
+            </form>
+        {% endif %}
+        {% if user.status == 'user' %}
+            <form action="/group/{{ id }}/status/{{ user.id }}/?status=blocked" method="POST">
+                <button type="submit">block</button>
+            </form>
+            {% if role == 'creator' %}
+            <form action="/group/{{ id }}/status/{{ user.id }}/?status=admin" method="POST">
+                <button type="submit">Promote to admin</button>
+            </form>
+            {% endif %}
+        {% endif %}
+        {% if user.status == 'admin' and role == 'creator' %}
+            <form action="/group/{{ id }}/status/{{ user.id }}/?status=user" method="POST">
+                <button type="submit">Set to user</button>
+            </form>
+        {% endif %}
+        {% if user.status == 'blocked' %}
+            <form action="/group/{{ id }}/status/{{ user.id }}/?status=user" method="POST">
+                <button type="submit">Unblock</button>
+            </form>
+        {% endif %}<br/>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Group join form</title>
+</head>
+<body>
+    {% if error_message %}
+        <p style="color: red">{{ error_message }}</p>
+    {% endif %}
+    <a href='/'>Main page</a>
+    <form action="/group/join" method="post">
+        <p>
+            <label for="id">Group id</label>
+            <input type="number" name="id" required>
+        </p>
+        <p>
+            <button type="submit">Join</button>
+        </p>
+    </form>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Finances</title>
+</head>
+
+<body>
+    {% if error_message %}
+        <p style="color: red">{{ error_message }}</p>
+    {% endif %}
+    <p>
+        Welcome, {{ user }}!
+        {% if groups|length > 0 %}
+            Your groups:
+            <table>
+                <thead>
+                    <th>name</th>
+                    <th>participants</th>
+                    <th>balance</th>
+                    <th>role</th>
+                </thead>
+                <tbody>
+                    {% for g in groups %}
+                        <tr>
+                            <td><a href="/group/{{ g.id }}">{{ g.name }}</a> </td>
+                            <td>{{ g.size }}</td>
+                            <td>{{ g.balance }}</td>
+                            <td>{{ g.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            Or do you want to <a href='/group/new'>create</a> or <a href="/group/join">join</a> one?
+        {% else %}
+            You don't have any groups. Do you want to <a href='/group/new'>create</a> or <a href="/group/join">join</a> one?
+        {% endif %}
+
+        <form action="/logout" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </p>
+
+</body>
+
+</html>

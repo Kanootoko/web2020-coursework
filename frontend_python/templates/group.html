@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Group {{ name }}</title>
+</head>
+<body>
+    <a href="/">To the main page</a><br/>
+    <h1>{{ name }} (id {{ id }})</h1>
+    <h2>Balance: {{ balance }}</h2>
+    {% if role == 'admin' or role == 'creator' %}
+        <a href="/group/{{ id }}/manage">Manage group</a><br/>
+    {% endif %}
+    Operations:<br/>
+    <table>
+        <thead>
+            <th>user</th>
+            <th>type</th>
+            <th>amount</th>
+            <th>name</th>
+            <th>description</th>
+            <th>date</th>
+        </thead>
+        <tbody>
+            {% for operation in operations %}
+                <tr>
+                    <td>{{ operation.user }}</td>
+                    <td>{{ operation.type }}</td>
+                    <td>
+                        {% if operation.type == 'income' %}
+                            <span style="color: green">
+                        {% else %}
+                            <span style="color: red">
+                        {% endif %}
+                        {{ operation.amount }}
+                        </span>
+                    </td>
+                    <td>{{ operation.name }}</td>
+                    <td>{{ operation.description }}</td>
+                    <td>{{ operation.date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form action="/group/{{ id }}/operation/" method="post">
+        Create operation: <input type="number" name="amount" placeholder="amount">
+            <input type="text" name="name" placeholder="name">
+            <input type="text" name="description" placeholder="description"><br/>
+        <input type="radio" name="type" value="income" checked>Income<br/>
+        <input type="radio" name="type" value="spending">Spending<br/>
+        <button type="submit">Create operation</button>
+    </form>
+    Chat:<br/>
+    {% if chat|length == 0 %}
+        (empty)
+    {% else %}
+        {% for message in chat %}
+            <b>{{ message.user }}</b>: {{ message.message }} <i>{{ message.time }}</i>
+        {% endfor %}
+    {% endif %}
+    <form action="/group/{{ id }}/chat/" method="post">
+        <input type="text" name="message" id="message">
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
