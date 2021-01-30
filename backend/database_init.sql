@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS user_group_statuses (
 CREATE TABLE IF NOT EXISTS operations (
     id serial PRIMARY KEY NOT NULL,
     user_id integer REFERENCES users(id) NOT NULL,
-    group_id integer REFERENCES groups(id) NOT NULL,
+    group_id integer REFERENCES groups(id) ON DELETE CASCADE NOT NULL,
     type_id integer REFERENCES operation_types(id) NOT NULL,
     amount float NOT NULL,
     name varchar(50) NOT NULL,
@@ -36,14 +36,14 @@ CREATE TABLE IF NOT EXISTS operations (
 CREATE TABLE IF NOT EXISTS users_groups (
     id serial PRIMARY KEY NOT NULL,
     user_id integer REFERENCES users(id) NOT NULL,
-    group_id integer REFERENCES groups(id) NOT NULL,
+    group_id integer REFERENCES groups(id) ON DELETE CASCADE NOT NULL,
     status_id integer REFERENCES user_group_statuses NOT NULL,
     UNIQUE (user_id, group_id)
 );
 
 CREATE TABLE IF NOT EXISTS messages (
     id serial PRIMARY KEY NOT NULL,
-    user_group_id integer REFERENCES users_groups(id) NOT NULL,
+    user_group_id integer REFERENCES users_groups(id) ON DELETE CASCADE NOT NULL,
     time timestamp NOT NULL,
     message text NOT NULL
 )

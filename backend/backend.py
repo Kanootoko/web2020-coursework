@@ -7,7 +7,7 @@ import time
 from typing import Optional, List
 from io import BytesIO
 
-_version = '2021-01-15'
+_version = '2021-01-30'
 
 class Properties:
     def __init__(self, db_addr: str, db_port: int, db_name: str, db_user: str, db_pass: str, api_port: int):
@@ -122,11 +122,17 @@ def add_group() -> Response:
         props.conn.commit()
         return make_response(jsonify({'group_id': id, 'user_group_id': cur.fetchone()[0]}))
 
-@app.route('/group/<int:id>/', methods = ['DELETE'])
-def delete_group(id) -> Response:
+@app.route('/group/<int:group_id>/', methods = ['DELETE'])
+def delete_group(group_id) -> Response:
     if not 'user' in request.args:
         return make_response(jsonify({'error': f'user parameter is missing in request path'}), 400)
+    id = request.args['user'].isnumeric()
     with props.conn.cursor() as cur:
+        cur.execute('SELECT ugs.name FROM users_groups ug JOIN user_group_statuses ugs on ug.status_id = ugs.id ' +
+                ('WHERE ug.user_id = %s' if id else 'JOIN users u on ug.user_id = u.id WHERE u.name = %s'), (request.args['user'],))
+        res = cur.fetchone()
+        if res is None or res[0] != 'creator':
+            return make_response(jsonify({'error': 'user does not have enough right to delete group'}))
         cur.execute('DELETE FROM groups WHERE id = %s', (id,))
         props.conn.commit()
         return make_response(jsonify({'result': f'deleted group with id={id}'}))
@@ -396,6 +402,5 @@ if __name__ == '__main__':
     print(f'Starting finances app API server at port {props.api_port}.')
     print(f'Using postgresql database: {props.db_user}@{props.db_addr}:{props.db_port}/{props.db_name}')
 
-    # drop_tables()
     ensure_tables()
     app.run(host='0.0.0.0', port=props.api_port)

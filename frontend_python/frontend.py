@@ -5,7 +5,7 @@ from typing import Optional
 import os
 import traceback, itertools
 
-_version = '2021-01-15'
+_version = '2021-01-30'
 
 class Properties:
     def __init__(self, api_addr):
@@ -90,7 +90,7 @@ def group_page(group_id: int) -> Response:
 def create_group_page() -> Response:
     if not 'user' in session:
         return make_response(redirect(must_login_error))
-    return make_response(render_template('group_create.html'))
+    return make_response(render_template('group_create.html', error_message=request.args.get('error')))
 
 @app.route('/group/new/', methods = ['POST'])
 def create_group() -> Response:
@@ -132,7 +132,7 @@ def group_manage_page(group_id: int) -> Response:
     users_statuses_name = dict(map(lambda x: (x['username'], x['status']), group['users']))
     if users_statuses_name[session['user']] not in ('admin', 'creator'):
         return make_response(redirect(f'/group/{group_id}/'))
-    return make_response(render_template('group_manage.html', id = group['id'], name = group['name'], users = group['users']))
+    return make_response(render_template('group_manage.html', id = group['id'], name = group['name'], users = group['users'], role = users_statuses_name[session['user']]))
 
 @app.route('/group/<int:group_id>/status/<int:user_id>/', methods = ['POST'])
 def change_user_status(group_id: int, user_id: int) -> Response:
@@ -187,7 +187,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', action='store', dest='port',
                         help=f'finances app frontend port', type=int, default=8080)
     parser.add_argument('-a', '--api_addr', action='store', dest='api_addr',
-                        help=f'finances app API server address', type=str, default='http://localhost:3001')
+                        help=f'finances app API server address', type=str, default='http://127.0.0.1:3001')
     args = parser.parse_args()
 
     properties = Properties(args.api_addr)
@@ -197,7 +197,7 @@ if __name__ == '__main__':
         api_version = requests.get(properties.api_addr + '/api/').json()['version']
         print(f'Api version {api_version} is available at {properties.api_addr}')
     except Exception as ex:
-        print(f'Could not get version of api: error {ex}')
+        print(f'Could not get version of api at {properties.api_addr}: error {ex}')
 
     app.secret_key = os.urandom(24)
     app.run(host='0.0.0.0', port=args.port)
